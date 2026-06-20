@@ -563,9 +563,9 @@ const filtering=()=>!!(state.group||state.team);function matchRow(m){const lv=LI
 else if(st===0){const hs=lv&&lv.hs!=null?lv.hs:'–',as=lv&&lv.as!=null?lv.as:'–';mid=`<div class="score fin">${hs} : ${as}</div>`;badge=`<span class="badge ft">${esc(t.ft)}</span>`;}
 else{mid=`<div class="ko">${fmtTime.format(new Date(m.d))}</div><div class="cd" data-k="${Date.parse(m.d)}"></div>`;badge='';}
 const el=document.createElement('div');el.className='match'+(st===3?' live':'');const showProv=false;el.innerHTML=`<div class="row">
-<div class="team"><img src="flag/${esc(m.hc)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-fallback').innerText=countryEmoji('${esc(m.hc)}');this.parentNode.querySelector('.flag-fallback').style.display='inline-flex'"><span class="flag-fallback" style="display:none">🌍</span><span class="team-code">${esc(teamCode('h',m))}</span></div>
+<div class="team"><img src="flag/${esc(m.hc)}.png" onerror="this.style.display='none';const fb=this.parentNode.querySelector('.flag-fallback');fb.textContent=fb.dataset.emoji;fb.style.display='inline-flex'"><span class="flag-fallback" style="display:none" data-emoji="${countryEmoji(m.hc)}"></span><span class="team-code">${esc(teamCode('h',m))}</span></div>
        <div class="mid">${mid}</div>
-       <div class="team away"><span class="team-code">${esc(teamCode('a',m))}</span><img src="flag/${esc(m.ac)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-fallback').innerText=countryEmoji('${esc(m.ac)}');this.parentNode.querySelector('.flag-fallback').style.display='inline-flex'"><span class="flag-fallback" style="display:none">🌍</span></div>
+       <div class="team away"><span class="team-code">${esc(teamCode('a',m))}</span><img src="flag/${esc(m.ac)}.png" onerror="this.style.display='none';const fb=this.parentNode.querySelector('.flag-fallback');fb.textContent=fb.dataset.emoji;fb.style.display='inline-flex'"><span class="flag-fallback" style="display:none" data-emoji="${countryEmoji(m.ac)}"></span></div>
        ${badge}
      </div>`
 +(showProv?``:'');return el;}
