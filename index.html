@@ -302,6 +302,21 @@ button { font-family: inherit; }
   box-shadow: 0 1px 5px rgba(0,0,0,.5);
 }
 
+.flag-fallback {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(0, 163, 108, .4);
+  box-shadow: 0 1px 5px rgba(0,0,0,.5);
+  color: var(--mx-white);
+  font-size: .9rem;
+}
+
 .team span {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -546,9 +561,9 @@ const filtering=()=>!!(state.group||state.team);function matchRow(m){const lv=LI
 else if(st===0){const hs=lv&&lv.hs!=null?lv.hs:'–',as=lv&&lv.as!=null?lv.as:'–';mid=`<div class="score fin">${hs} : ${as}</div>`;badge=`<span class="badge ft">${esc(t.ft)}</span>`;}
 else{mid=`<div class="ko">${fmtTime.format(new Date(m.d))}</div><div class="cd" data-k="${Date.parse(m.d)}"></div>`;badge='';}
 const el=document.createElement('div');el.className='match'+(st===3?' live':'');const showProv=false;el.innerHTML=`<div class="row">
-       <div class="team"><img src="flag/${esc(m.hc)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-placeholder').style.display='inline-flex';this.parentNode.querySelector('.team-code').style.display='none'"><span class="flag-placeholder" style="display:none">${esc(m.hc)}</span><span class="team-code">${esc(teamCode('h',m))}</span></div>
+<div class="team"><img src="flag/${esc(m.hc)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-fallback').style.display='inline-flex'"><span class="flag-fallback" style="display:none">🌍</span><span class="team-code">${esc(teamCode('h',m))}</span></div>
        <div class="mid">${mid}</div>
-       <div class="team away"><span class="team-code">${esc(teamCode('a',m))}</span><img src="flag/${esc(m.ac)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-placeholder').style.display='inline-flex';this.parentNode.querySelector('.team-code').style.display='none'"><span class="flag-placeholder" style="display:none">${esc(m.ac)}</span></div>
+       <div class="team away"><span class="team-code">${esc(teamCode('a',m))}</span><img src="flag/${esc(m.ac)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-fallback').style.display='inline-flex'"><span class="flag-fallback" style="display:none">🌍</span></div>
        ${badge}
      </div>`
 +(showProv?``:'');return el;}
