@@ -537,6 +537,8 @@ function setFormats(){fmtTime=new Intl.DateTimeFormat(state.lang,{hour:'2-digit'
 function countryName(cc){try{const n=displayNames&&displayNames.of(cc);if(n&&n!==cc)return n;}catch{}return(byCC[cc]&&byCC[cc].n)||cc;}
 function teamName(side,m){const loc=NAMES[m.id]&&NAMES[m.id][side];return loc||(side==='h'?m.h:m.a);}
 function teamCode(side,m){const a3=side==='h'?m.hc:m.ac;return a3||(side==='h'?m.h:m.a);}
+const COUNTRY_EMOJI={ALG:'🇩🇿',ARG:'🇦🇷',AUS:'🇦🇺',AUT:'🇦🇹',BEL:'🇧🇪',BIH:'🇧🇦',BRA:'🇧🇷',CAN:'🇨🇦',CIV:'🇨🇮',COD:'🇨🇩',COL:'🇨🇴',CPV:'🇨🇻',CRO:'🇭🇷',CUW:'🇨🇼',CZE:'🇨🇿',ECU:'🇪🇨',EGY:'🇪🇬',ENG:'🇬🇧',ESP:'🇪🇸',FRA:'🇫🇷',GER:'🇩🇪',GHA:'🇬🇭',HAI:'🇭🇹',IRN:'🇮🇷',IRQ:'🇮🇶',JOR:'🇯🇴',JPN:'🇯🇵',KOR:'🇰🇷',KSA:'🇸🇦',MAR:'🇲🇦',MEX:'🇲🇽',NED:'🇳🇱',NOR:'🇳🇴',NZL:'🇳🇿',PAN:'🇵🇦',PAR:'🇵🇾',POR:'🇵🇹',QAT:'🇶🇦',RSA:'🇿🇦',SCO:'🏴',SEN:'🇸🇳',SUI:'🇨🇭',SWE:'🇸🇪',TUN:'🇹🇳',TUR:'🇹🇷',URU:'🇺🇾',USA:'🇺🇸',UZB:'🇺🇿'};
+function countryEmoji(code){return COUNTRY_EMOJI[code]||'🌍';}
 function localStage(m){return(NAMES[m.id]&&NAMES[m.id].stage)||m.st;}
 function localGroup(m){if(NAMES[m.id]&&NAMES[m.id].group)return NAMES[m.id].group;return m.g?m.g.replace('Grupo',t.group):'';}
 function statusOf(m){const lv=LIVE[m.id];if(lv&&lv.st!=null)return lv.st;return Date.parse(m.d)<Date.now()?0:1;}
@@ -561,9 +563,9 @@ const filtering=()=>!!(state.group||state.team);function matchRow(m){const lv=LI
 else if(st===0){const hs=lv&&lv.hs!=null?lv.hs:'–',as=lv&&lv.as!=null?lv.as:'–';mid=`<div class="score fin">${hs} : ${as}</div>`;badge=`<span class="badge ft">${esc(t.ft)}</span>`;}
 else{mid=`<div class="ko">${fmtTime.format(new Date(m.d))}</div><div class="cd" data-k="${Date.parse(m.d)}"></div>`;badge='';}
 const el=document.createElement('div');el.className='match'+(st===3?' live':'');const showProv=false;el.innerHTML=`<div class="row">
-<div class="team"><img src="flag/${esc(m.hc)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-fallback').style.display='inline-flex'"><span class="flag-fallback" style="display:none">🌍</span><span class="team-code">${esc(teamCode('h',m))}</span></div>
+<div class="team"><img src="flag/${esc(m.hc)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-fallback').innerText=countryEmoji('${esc(m.hc)}');this.parentNode.querySelector('.flag-fallback').style.display='inline-flex'"><span class="flag-fallback" style="display:none">🌍</span><span class="team-code">${esc(teamCode('h',m))}</span></div>
        <div class="mid">${mid}</div>
-       <div class="team away"><span class="team-code">${esc(teamCode('a',m))}</span><img src="flag/${esc(m.ac)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-fallback').style.display='inline-flex'"><span class="flag-fallback" style="display:none">🌍</span></div>
+       <div class="team away"><span class="team-code">${esc(teamCode('a',m))}</span><img src="flag/${esc(m.ac)}.png" onerror="this.style.display='none';this.parentNode.querySelector('.flag-fallback').innerText=countryEmoji('${esc(m.ac)}');this.parentNode.querySelector('.flag-fallback').style.display='inline-flex'"><span class="flag-fallback" style="display:none">🌍</span></div>
        ${badge}
      </div>`
 +(showProv?``:'');return el;}
