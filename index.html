@@ -537,7 +537,26 @@ function pad(n){return String(n).padStart(2,'0');}
 function setFormats(){fmtTime=new Intl.DateTimeFormat(state.lang,{hour:'2-digit',minute:'2-digit'});try{displayNames=new Intl.DisplayNames([state.lang],{type:'region'});}catch{displayNames=null;}}
 function countryName(cc){try{const n=displayNames&&displayNames.of(cc);if(n&&n!==cc)return n;}catch{}return(byCC[cc]&&byCC[cc].n)||cc;}
 function teamName(side,m){const loc=NAMES[m.id]&&NAMES[m.id][side];return loc||(side==='h'?m.h:m.a);}
-function teamCode(side,m){const a3=side==='h'?m.hc:m.ac;return a3||(side==='h'?m.h:m.a);}
+// Fallback mapping Round of 32 - datos reales mientras FIFA API actualiza
+const R32_TEAMS = {
+  '400021518': { h:'RSA', a:'CAN' }, // Jun 28 - LA
+  '400021516': { h:'BRA', a:'JPN' }, // Jun 29 - Houston
+  '400021513': { h:'GER', a:'PAR' }, // Jun 29 - Boston
+  '400021522': { h:'NED', a:'MAR' }, // Jun 29 - Monterrey
+  '400021514': { h:'CIV', a:'NOR' }, // Jun 30 - Dallas
+  '400021523': { h:'FRA', a:'SWE' }, // Jun 30 - NJ
+  '400021520': { h:'MEX', a:'ECU' }, // Jun 30 - CDMX
+  '400021512': { h:'ENG', a:'COD' }, // Jul 1 - Atlanta
+  '400021525': { h:'BEL', a:'SEN' }, // Jul 1 - Seattle
+  '400021524': { h:'USA', a:'BIH' }, // Jul 1 - SF
+  '400021519': { h:'ESP', a:'AUT' }, // Jul 2 - LA
+  '400021526': { h:'POR', a:'CRO' }, // Jul 2 - Toronto
+  '400021527': { h:'SUI', a:'ALG' }, // Jul 2 - Vancouver
+  '400021515': { h:'COL', a:'GHA' }, // Jul 3 - Dallas
+  '400021521': { h:'AUS', a:'EGY' }, // Jul 3 - Miami
+  '400021517': { h:'ARG', a:'CPV' }, // Jul 3 - KC
+};
+function teamCode(side,m){const fb=R32_TEAMS[m.id];if(fb)return side==='h'?fb.h:fb.a;const a3=side==='h'?m.hc:m.ac;return a3||(side==='h'?m.h:m.a);}
 const COUNTRY_EMOJI={ALG:'🇩🇿',ARG:'🇦🇷',AUS:'🇦🇺',AUT:'🇦🇹',BEL:'🇧🇪',BIH:'🇧🇦',BRA:'🇧🇷',CAN:'🇨🇦',CIV:'🇨🇮',COD:'🇨🇩',COL:'🇨🇴',CPV:'🇨🇻',CRO:'🇭🇷',CUW:'🇨🇼',CZE:'🇨🇿',ECU:'🇪🇨',EGY:'🇪🇬',ENG:'🇬🇧',ESP:'🇪🇸',FRA:'🇫🇷',GER:'🇩🇪',GHA:'🇬🇭',HAI:'🇭🇹',IRN:'🇮🇷',IRQ:'🇮🇶',JOR:'🇯🇴',JPN:'🇯🇵',KOR:'🇰🇷',KSA:'🇸🇦',MAR:'🇲🇦',MEX:'🇲🇽',NED:'🇳🇱',NOR:'🇳🇴',NZL:'🇳🇿',PAN:'🇵🇦',PAR:'🇵🇾',POR:'🇵🇹',QAT:'🇶🇦',RSA:'🇿🇦',SCO:'🏴',SEN:'🇸🇳',SUI:'🇨🇭',SWE:'🇸🇪',TUN:'🇹🇳',TUR:'🇹🇷',URU:'🇺🇾',USA:'🇺🇸',UZB:'🇺🇿'};
 function countryEmoji(code){return COUNTRY_EMOJI[code]||'🌍';}
 function localStage(m){return(NAMES[m.id]&&NAMES[m.id].stage)||m.st;}
@@ -563,10 +582,15 @@ function passFilter(m){if(state.group&&m.g!==state.group)return false;if(state.t
 const filtering=()=>!!(state.group||state.team);function matchRow(m){const lv=LIVE[m.id],st=statusOf(m);let mid,badge;if(st===3){mid=`<div class="score lv">${lv.hs??0} : ${lv.as??0}</div><div class="minute">${esc(lv.mt||'')}</div>`;badge=`<span class="badge lv">${esc(t.live)}</span>`;}
 else if(st===0){const hs=lv&&lv.hs!=null?lv.hs:'–',as=lv&&lv.as!=null?lv.as:'–';mid=`<div class="score fin">${hs} : ${as}</div>`;badge=`<span class="badge ft">${esc(t.ft)}</span>`;}
 else{mid=`<div class="ko">${fmtTime.format(new Date(m.d))}</div><div class="cd" data-k="${Date.parse(m.d)}"></div>`;badge='';}
-const el=document.createElement('div');el.className='match'+(st===3?' live':'');const showProv=false;el.innerHTML=`<div class="row">
-<div class="team"><img src="flag/${esc(m.hc)}.png" onerror="this.style.display='none';const fb=this.parentNode.querySelector('.flag-fallback');fb.textContent=fb.dataset.emoji;fb.style.display='inline-flex'"><span class="flag-fallback" style="display:none" data-emoji="${countryEmoji(m.hc)}"></span><span class="team-code">${esc(teamCode('h',m))}</span></div>
+const el=document.createElement('div');el.className='match'+(st===3?' live':'');const showProv=false;
+  const hCode=(R32_TEAMS[m.id]?R32_TEAMS[m.id].h:m.hc)||'';
+  const aCode=(R32_TEAMS[m.id]?R32_TEAMS[m.id].a:m.ac)||'';
+  const hEmoji=countryEmoji(hCode);
+  const aEmoji=countryEmoji(aCode);
+  el.innerHTML=`<div class="row">
+<div class="team"><img src="flag/${esc(hCode)}.png" onerror="this.style.display='none';const fb=this.parentNode.querySelector('.flag-fallback');fb.textContent=fb.dataset.emoji;fb.style.display='inline-flex'"><span class="flag-fallback" style="display:none" data-emoji="${hEmoji}"></span><span class="team-code">${esc(teamCode('h',m))}</span></div>
        <div class="mid">${mid}</div>
-       <div class="team away"><span class="team-code">${esc(teamCode('a',m))}</span><img src="flag/${esc(m.ac)}.png" onerror="this.style.display='none';const fb=this.parentNode.querySelector('.flag-fallback');fb.textContent=fb.dataset.emoji;fb.style.display='inline-flex'"><span class="flag-fallback" style="display:none" data-emoji="${countryEmoji(m.ac)}"></span></div>
+       <div class="team away"><span class="team-code">${esc(teamCode('a',m))}</span><img src="flag/${esc(aCode)}.png" onerror="this.style.display='none';const fb=this.parentNode.querySelector('.flag-fallback');fb.textContent=fb.dataset.emoji;fb.style.display='inline-flex'"><span class="flag-fallback" style="display:none" data-emoji="${aEmoji}"></span></div>
        ${badge}
      </div>`
 +(showProv?``:'');return el;}
