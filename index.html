@@ -536,9 +536,8 @@ function flagImg(a3,size){return a3?`<img src="flag/${esc(a3)}.png" alt="" loadi
 function pad(n){return String(n).padStart(2,'0');}
 function setFormats(){fmtTime=new Intl.DateTimeFormat(state.lang,{hour:'2-digit',minute:'2-digit'});try{displayNames=new Intl.DisplayNames([state.lang],{type:'region'});}catch{displayNames=null;}}
 function countryName(cc){try{const n=displayNames&&displayNames.of(cc);if(n&&n!==cc)return n;}catch{}return(byCC[cc]&&byCC[cc].n)||cc;}
-function formatTeamLabel(value){if(!value)return'';const raw=String(value).trim().toUpperCase();if(/^([12])([A-Z])$/.test(raw)){const role=raw[0]==='1'?'Winner':'Runner-up';return `${role} Group ${raw[1]}`;}if(/^3([A-Z]+)$/.test(raw)){const groups=raw.slice(1).split('').join('/');return `Best 3rd-place (${groups})`;}if(/^W\d+$/.test(raw)){return `Winner Match ${raw.slice(1)}`;}if(/^RU\d+$/.test(raw)){return `Runner-up Match ${raw.slice(2)}`;}return value;}
-function teamName(side,m){const loc=NAMES[m.id]&&NAMES[m.id][side];return formatTeamLabel(loc||(side==='h'?m.h:m.a));}
-function teamCode(side,m){const a3=side==='h'?m.hc:m.ac;return a3||formatTeamLabel(side==='h'?m.h:m.a);}
+function teamName(side,m){const loc=NAMES[m.id]&&NAMES[m.id][side];return loc||(side==='h'?m.h:m.a);}
+function teamCode(side,m){const a3=side==='h'?m.hc:m.ac;return a3||(side==='h'?m.h:m.a);}
 const COUNTRY_EMOJI={ALG:'🇩🇿',ARG:'🇦🇷',AUS:'🇦🇺',AUT:'🇦🇹',BEL:'🇧🇪',BIH:'🇧🇦',BRA:'🇧🇷',CAN:'🇨🇦',CIV:'🇨🇮',COD:'🇨🇩',COL:'🇨🇴',CPV:'🇨🇻',CRO:'🇭🇷',CUW:'🇨🇼',CZE:'🇨🇿',ECU:'🇪🇨',EGY:'🇪🇬',ENG:'🇬🇧',ESP:'🇪🇸',FRA:'🇫🇷',GER:'🇩🇪',GHA:'🇬🇭',HAI:'🇭🇹',IRN:'🇮🇷',IRQ:'🇮🇶',JOR:'🇯🇴',JPN:'🇯🇵',KOR:'🇰🇷',KSA:'🇸🇦',MAR:'🇲🇦',MEX:'🇲🇽',NED:'🇳🇱',NOR:'🇳🇴',NZL:'🇳🇿',PAN:'🇵🇦',PAR:'🇵🇾',POR:'🇵🇹',QAT:'🇶🇦',RSA:'🇿🇦',SCO:'🏴',SEN:'🇸🇳',SUI:'🇨🇭',SWE:'🇸🇪',TUN:'🇹🇳',TUR:'🇹🇷',URU:'🇺🇾',USA:'🇺🇸',UZB:'🇺🇿'};
 function countryEmoji(code){return COUNTRY_EMOJI[code]||'🌍';}
 function localStage(m){return(NAMES[m.id]&&NAMES[m.id].stage)||m.st;}
